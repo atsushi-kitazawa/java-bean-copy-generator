@@ -18,14 +18,31 @@ public class Main {
 
   private static void createCopyCode(Class<?> src, Class<?> dest) {
     List<Field> targetFields = new ArrayList<>();
+
     List<String> srcFieldsName =
         Arrays.asList(src.getDeclaredFields()).stream()
             .map(f -> f.getName())
             .collect(Collectors.toList());
+
+    while (true) {
+      src = src.getSuperclass();
+      // System.out.println("debug:" + src.getSimpleName());
+      if (!src.equals(Object.class)) {
+        List<String> superClassFieldsName =
+            Arrays.asList(src.getDeclaredFields()).stream()
+                .map(f -> f.getName())
+                .collect(Collectors.toList());
+	srcFieldsName.addAll(superClassFieldsName);
+      } else {
+        break;
+      }
+    }
     for (Field f : dest.getDeclaredFields()) {
       if (srcFieldsName.contains(f.getName())) targetFields.add(f);
     }
 
+    // System.out.println("debug srcFieldsName:" + srcFieldsName);
+    // System.out.println("debug targetFields:" + targetFields);
     // for (Field f : targetFields) {
     //  System.out.println(f.getName());
     //  System.out.println("hoge");
