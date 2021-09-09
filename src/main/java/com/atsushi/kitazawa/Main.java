@@ -19,20 +19,14 @@ public class Main {
   private static void createCopyCode(Class<?> src, Class<?> dest) {
     List<Field> targetFields = new ArrayList<>();
 
-    List<String> srcFieldsName =
-        Arrays.asList(src.getDeclaredFields()).stream()
-            .map(f -> f.getName())
-            .collect(Collectors.toList());
+    List<String> srcFieldsName = getClassFieldsNameList(src);
 
     while (true) {
       src = src.getSuperclass();
       // System.out.println("debug:" + src.getSimpleName());
       if (!src.equals(Object.class)) {
-        List<String> superClassFieldsName =
-            Arrays.asList(src.getDeclaredFields()).stream()
-                .map(f -> f.getName())
-                .collect(Collectors.toList());
-	srcFieldsName.addAll(superClassFieldsName);
+        List<String> superClassFieldsName = getClassFieldsNameList(src);
+            	srcFieldsName.addAll(superClassFieldsName);
       } else {
         break;
       }
@@ -63,5 +57,12 @@ public class Main {
 
   private static String firstCharUpperCase(String s) {
     return s.substring(0, 1).toUpperCase() + s.substring(1, s.length());
+  }
+
+  private static List<String> getClassFieldsNameList(Class<?> clazz) {
+    return Arrays.asList(clazz.getDeclaredFields()).stream()
+                .map(f -> f.getName())
+                .collect(Collectors.toList());
+
   }
 }
