@@ -1,9 +1,12 @@
 package com.atsushi.kitazawa;
 
+import java.util.List;
+
 public class Src {
     private String str;
     private int i;
     private Long l;
+    private List<String> list;
 
     public String getStr() {
 	return str;
@@ -27,5 +30,13 @@ public class Src {
 
     public void setL(Long l) {
 	this.l = l;
+    }
+
+    public List<String> getList() {
+	return list;
+    }
+
+    public void setList(List<String> list) {
+	this.list = list;
     }
 }

@@ -1,6 +1,7 @@
 package com.atsushi.kitazawa;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +27,7 @@ public class Main {
       // System.out.println("debug:" + src.getSimpleName());
       if (!src.equals(Object.class)) {
         List<String> superClassFieldsName = getClassFieldsNameList(src);
-            	srcFieldsName.addAll(superClassFieldsName);
+        srcFieldsName.addAll(superClassFieldsName);
       } else {
         break;
       }
@@ -60,9 +61,55 @@ public class Main {
   }
 
   private static List<String> getClassFieldsNameList(Class<?> clazz) {
-    return Arrays.asList(clazz.getDeclaredFields()).stream()
-                .map(f -> f.getName())
-                .collect(Collectors.toList());
+    List<String> list = new ArrayList<>();
+    for(Field f : clazz.getDeclaredFields()) {
+	if(f.getType().equals(List.class)) {
+	    ParameterizedType type = (ParameterizedType)f.getGenericType();
+	    Class<?> genericClass = (Class<?>)type.getActualTypeArguments()[0];
+	    if(isRequireRecursiveClass(genericClass)) {
+		System.out.println("debug no support:");
+	    } else {
+		list.add(f.getName());
+	    }
+	} else {
+	    list.add(f.getName());	
+	}
+    }
+    return list;
+  }
 
+  private static boolean isRequireRecursiveClass(Class<?> clazz) {
+      if(checkTargetClasses().contains(clazz)) {
+	  return false;
+      } else {
+      return true;
+      }
+  }
+
+  private static List<Class<?>> checkTargetClasses() {
+      return Arrays.asList(String.class, Integer.class, Long.class);
+  }
+
+  // test code.
+  private static void test() {
+      Src2 src2 = new Src2();
+      Src3 src31 = new Src3();
+      src31.setStr("aaa");
+      src31.setI(0);
+      Src3 src32 = new Src3();
+      src32.setStr("bbb");
+      src32.setI(1);
+      List<Src3> src3List = Arrays.asList(src31, src32);
+      src2.setList(src3List);
+
+      Dest2 dest2 = new Dest2();
+      List<Dest3> dest3List = new ArrayList<>(); 
+      for(Src3 s : src2.getList()) {
+	  Dest3 d = new Dest3();
+	  d.setStr(s.getStr());
+	  d.setI(s.getI());
+	  dest3List.add(d);
+      }
+      dest2.setList(dest3List);
   }
 }
