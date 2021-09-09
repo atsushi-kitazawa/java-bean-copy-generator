@@ -43,10 +43,6 @@ public class Main {
 
     // System.out.println("debug srcFieldsName:" + srcFieldsName);
     // System.out.println("debug targetFields:" + targetFields);
-    // for (Field f : targetFields) {
-    //  System.out.println(f.getName());
-    //  System.out.println("hoge");
-    // }
 
     StringBuffer code = new StringBuffer();
     for (Field f : targetFields) {
